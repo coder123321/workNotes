@@ -1,0 +1,189 @@
+在vue中定义模板组件时存在有多种选择。我算了一下，至少有7种不同的方法：
+
+String
+
+Template literal
+
+X-Templates
+
+Inline
+
+Render functions
+
+JSX
+
+Single page components
+
+当然，可能还会有更多方法!
+
+在这篇文章里，我们将会展示每一个示例，并且分析其优缺点，以便你能明白在对应的情形下，哪种方式是合适的。
+
+_注意: 这篇文章最初发表在 这里 Vue.js Developers blog on 2017/03/24_
+
+1. Strings
+默认情况下，模板会作为一个字符串被定义在你的JS文件里。但是我觉得大家都同意这种写法是难以看懂的，除了广泛的浏览器支持之外，这种方法并没有太多的好处。
+
+Vue.component('my-checkbox', {
+  template: '<div class="checkbox-wrapper" @click="check"><div :class="{ checkbox: true, checked: checked }"></div><div class="title">{{ title }}</div></div>',
+  data() {
+    return { checked: false, title: 'Check me' }
+  },
+  methods: {
+    check() { this.checked = !this.checked; }
+  }
+});
+
+2. Template literals（模板字符串）
+通过ES6的模板字符串（反引号）语法，你在定义模板时可以直接换行，这是你通过常规的JavaScript字符串没法做到的。 这种写法更容易阅读，并且这种模板字符串语法得到了许多新版本浏览器的支持。当然，为了安全起见，你仍然应该把它转译为ES5的语法形式。
+
+然而，这种方式并不完美，我发现大多数的IDE在语法高亮上做的差强人意，并且缩进和换行等，仍然是个痛。
+
+Vue.component('my-checkbox', {
+  template: `<div class="checkbox-wrapper" @click="check">
+              <div :class="{ checkbox: true, checked: checked }"></div>
+              <div class="title">{{ title }}</div>
+            </div>`,
+  data() {
+    return { checked: false, title: 'Check me' }
+  },
+  methods: {
+    check() { this.checked = !this.checked; }
+  }
+});
+
+3. X-Templates
+使用这种方法，你需要在index.html文件里的script标签中定义你的模板。script标签需要添加text/x-template类型作为标记，并且在定义组件时，通过id来引用。
+
+我喜欢这种方式，它允许你使用适当的HTML标记来书写你的HTML文件，但是不足之处在于，这种方式会把模板和组件的其它定义分开了。
+
+Vue.component('my-checkbox', {
+  template: '#checkbox-template',
+  data() {
+    return { checked: false, title: 'Check me' }
+  },
+  methods: {
+    check() { this.checked = !this.checked; }
+  }
+});
+
+<script type="text/x-template" id="checkbox-template">
+  <div class="checkbox-wrapper" @click="check">
+    <div :class="{ checkbox: true, checked: checked }"></div>
+    <div class="title">{{ title }}</div>
+  </div>
+</script>
+
+4. Inline Templates（内联模板）
+通过给组件添加inline-template属性来告诉Vue，在其里面的内容就是模板，而不是把它当作是分发内容(见 slots)。
+
+它的缺点和x-templates一样，但是有一个优点就是，这种写法是在HTML模板对应的位置，所以它在页面一加载就渲染，而不用等到JavaScript执行。
+
+Vue.component('my-checkbox', {
+  data() {
+    return { checked: false, title: 'Check me' }
+  },
+  methods: {
+    check() { this.checked = !this.checked; }
+  }
+});
+
+<my-checkbox inline-template>
+  <div class="checkbox-wrapper" @click="check">
+    <div :class="{ checkbox: true, checked: checked }"></div>
+    <div class="title">{{ title }}</div>
+  </div>
+</my-checkbox>
+
+5. Render functions（渲染函数）
+渲染函数需要你把模板当作一个JavaScript对象来进行定义，它们是一些复杂并且抽象的模板选项。
+
+然而，它的优点是你定义的模板更接近编译器，你可以使用所有JavaScript方法，而不是指令提供的那些功能。
+
+Vue.component('my-checkbox', {
+  data() {
+    return { checked: false, title: 'Check me' }
+  },
+  methods: {
+    check() { this.checked = !this.checked; }
+  },
+  render(createElement) {
+    return createElement(
+      'div',
+        {
+          attrs: {
+            'class': 'checkbox-wrapper'
+          },
+          on: {
+            click: this.check
+          }
+        },
+        [
+          createElement(
+            'div',
+            {
+              'class': {
+                checkbox: true,
+                checked: this.checked
+              }
+            }
+          ),
+          createElement(
+            'div',
+            {
+              attrs: {
+                'class': 'title'
+              }
+            },
+            [ this.title ]
+          )
+        ]
+    );
+  }
+});
+
+6. JSX
+Vue中最有争议性的模板选项就是JSX，一些开发者认为JSX语法太丑，不直观，而且和Vue的简洁特性相违背。
+
+JSX首先需要编译，因为浏览器并不支持JSX。但是如果你需要使用渲染函数，那么JSX语法绝对是一种更简洁的定义模板的方法。
+
+Vue.component('my-checkbox', {
+  data() {
+    return { checked: false, title: 'Check me' }
+  },
+  methods: {
+    check() { this.checked = !this.checked; }
+  },
+  render() {
+    return <div class="checkbox-wrapper" onClick={ this.check }>
+             <div class={{ checkbox: true, checked: this.checked }}></div>
+             <div class="title">{ this.title }</div>
+           </div>
+  }
+});
+
+7. Single File Components（单文件组件）
+只要在你的配置中使用的是合适的构建工具，那么单文件组件绝对是这些方法中的首选。它们有两个最好的优点：允许你使用标记，同时把所有组件定义都写在一个文件中。
+
+单文件组件需要编译，并且一些IDE不支持这种类型文件的语法高亮，否则它难以被其它方法打败。
+
+<template>
+  <div class="checkbox-wrapper" @click="check">
+    <div :class="{ checkbox: true, checked: checked }"></div>
+    <div class="title">{{ title }}</div>
+  </div>
+</template>
+<script>
+  export default {
+    data() {
+      return { checked: false, title: 'Check me' }
+    },
+    methods: {
+      check() { this.checked = !this.checked; }
+    }
+  }
+</script>
+
+你可能认为还有更多的方式来定义模板，因为你可能使用一些预编译模板，比如Pug.
+
+哪个最好?
+当然没有完美的方法，你应该根据你的实际案例来进行判断。我觉得一个好的程序员能知道所有可能性，并把它们当作Vue.js技术栈里一种解决问题的工具。
