@@ -23,3 +23,5 @@ Hashmap是允许key和value为null值的，用containsValue和containsKey方法�
 
 HashMap 哈希扩容必须要求为原容量的2倍，而且一定是2的幂次倍扩容结果，而且每次扩容时，原来数组中的元素依次重新计算存放位置，并重新插入；
 而Hashtable扩容为原容量2倍加1；
+
+![](../img/hashMap.png)
