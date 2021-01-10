@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+</head>
+<body>
+<h1>字母哥业务系统登录</h1>
+<form >
+    <span>用户名称</span><input type="text"  id="username"/> <br>
+    <span>用户密码</span><input type="password" id="password"/> <br>
+    <input onclick="login()" value="登陆">
+</form>
+
+</body>
+<script>
+    function login() {
+        debugger
+        var username = $("#username").val();
+        var pwd = $("#password").val();
+        if(!username||""==username||!pwd || ""==pwd){
+            alert("用户名、密码不能为空")
+            return;
+        }
+        $.ajax({
+            type:"POST",
+            url:"/login",
+            dataType:"json",
+            data:{
+                uname:username,
+                pword:pwd
+            },
+            success:function (json) {
+                debugger;
+                if(json.isok){
+                    location.href="/";
+                }else{
+                    alert(json.message);
+                    location.href="/login.html";
+                }
+            },
+            error:function () {
+                debugger
+            }
+        })
+    }
+
+
+</script>
+</html>
