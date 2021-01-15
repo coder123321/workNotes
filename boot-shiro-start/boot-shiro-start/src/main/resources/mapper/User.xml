@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sh.dao.UserDao">
+    <select id="findUserById" resultType="com.sh.entity.BaseUser" parameterType="String">
+        select * from base_user where id =#{id}
+    </select>
+
+    <select id="querybyname" resultType="com.sh.entity.BaseUser" parameterType="String">
+        select * from base_user where name =#{name}
+    </select>
+
+    <select id="queryOrganPermissionsByUserId" resultType="com.sh.entity.BaseUserRole" parameterType="String">
+        select * from base_userroles where userId =#{userId}
+    </select>
+</mapper>
