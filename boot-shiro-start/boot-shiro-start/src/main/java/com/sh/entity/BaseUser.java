@@ -14,6 +14,7 @@ public class BaseUser {
     private String status;
     private Date createdt;
     private Double pagecount;
+    private String token;
 
     public String getId() {
         return id;
@@ -61,5 +62,13 @@ public class BaseUser {
 
     public void setPagecount(Double pagecount) {
         this.pagecount = pagecount;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -14,4 +14,7 @@
     <select id="queryOrganPermissionsByUserId" resultType="com.sh.entity.BaseUserRole" parameterType="String">
         select * from base_userroles where userId =#{userId}
     </select>
+    <select id="querybyUserinfo" resultType="com.sh.entity.BaseUser" parameterType="String">
+        select * from base_user where name =#{name} and password =#{pwd}
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.sh.service;
 
+import com.sh.entity.AjaxResponse;
 import com.sh.entity.BaseUser;
 import com.sh.entity.BaseUserRole;
 
@@ -12,5 +13,7 @@ public interface UserService {
      BaseUser findUserById(String id);
      BaseUser querybyname(String name);
      List<BaseUserRole> queryOrganPermissionsByUserId(String name);
+     public AjaxResponse login(String uname,String pwd);
+     public AjaxResponse logout();
 
 }
